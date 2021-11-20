@@ -7,3 +7,8 @@
     height: 100%;
     max-width: 500px;
 }
+
+#receiptLink{
+    text-decoration: underline;
+    color: #1682a3;
+}

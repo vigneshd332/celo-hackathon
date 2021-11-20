@@ -1,6 +1,7 @@
 import React,  {useState } from 'react';
 import styles from './style.module.css';
 import { validateAddress, validateInteger } from '../../helpers/formValidator';
+import fetch from 'node-fetch';
 
 const Form = () => {
     const [address, setAddress] = useState(''); 
@@ -32,16 +33,31 @@ const Form = () => {
             return;
         }
         else{
-            setError('');
+            setError('Please Wait...');
+            const data = {
+                address: address,
+                amount: amount
+            };
+            fetch('/api/withdraw', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(data => {
+                setError('');
+                document.getElementById('messageDisplay').innerHTML = 'View the Transaction <a id="'+styles["receiptLink"]+'" target="_blank" href="https://alfajores-blockscout.celo-testnet.org/block/'+data.message.blockNumber+'/transactions">Here</a>';
+            })
+            .catch(err => console.log(err));
         }
     }
     return (
         <div className={styles.mainForm}>
-            <h1>CELO -&gt; INR</h1>
+            <h1>INR -&gt; CELO</h1>
             <input className={styles.formInput} onChange={handleSetAddress} type="text" placeholder="Enter Celo Address (NOT ETHEREUM ADDRESS)" />
             <input className={styles.formInput} onChange={handleSetAmount} type="text" placeholder="Enter Amount in cUSD" />
             <span>Estimated Cost in INR: {estAmount}</span>
-            <span>{error}</span>
+            <span id="messageDisplay">{error}</span>
             <button className={styles.transferButton} onClick={handleSubmit}>Transfer</button>
         </div>
     )
