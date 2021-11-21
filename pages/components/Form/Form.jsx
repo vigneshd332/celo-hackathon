@@ -1,24 +1,38 @@
-import React,  {useState } from 'react';
+import React,  { useState } from 'react';
 import styles from './style.module.css';
 import { validateAddress, validateInteger } from '../../helpers/formValidator';
 import fetch from 'node-fetch';
+import detectEthereumProvider from '@metamask/detect-provider';
 
 const Form = () => {
     const [address, setAddress] = useState(''); 
     const [error, setError] = useState('');
     const [amount, setAmount] = useState(0);
     const [estAmount, setEstAmount] = useState(0);
+    const [metamaskStatus, setMetamaskStatus] = useState('LOADING');
 
+    // Detect Metamask
+    detectEthereumProvider()
+    .then(provider => {
+        if (provider) {
+            setMetamaskStatus('CONNECTED');
+        } else {
+            setMetamaskStatus('NOT_FOUND');
+        }
+    })
+    .catch(err => {
+        setMetamaskStatus('NOTFOUND');
+    });
+
+    // Form Handlers
     const handleSetAmount = (e) => {
         setAmount(e.target.value);
         setEstAmount(Math.round((e.target.value*74.31 + Number.EPSILON) * 100) / 100);
     }
-
     const handleSetAddress = (e) => {
         setAddress(e.target.value);
         console.log(e.target.value);
     };
-
     const handleSubmit = () => {
         if(!validateAddress(address)) {
             setError('Invalid Address');
@@ -56,7 +70,8 @@ const Form = () => {
             .catch(err => console.log(err));
         }
     }
-    return (
+
+    return metamaskStatus === 'CONNECTED' ? (
         <div className={styles.mainForm}>
             <h1>INR -&gt; CELO</h1>
             <input className={styles.formInput} onChange={handleSetAddress} type="text" placeholder="Enter Celo Address (NOT ETHEREUM ADDRESS)" />
@@ -65,7 +80,7 @@ const Form = () => {
             <span id="messageDisplay">{error}</span>
             <button className={styles.transferButton} onClick={handleSubmit}>Transfer</button>
         </div>
-    )
+    ) : (metamaskStatus === 'LOADING' ? <p>Loading...</p> : <p>Please Install Metamask</p>);
 }
 
 export default Form
