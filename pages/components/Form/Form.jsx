@@ -12,7 +12,7 @@ const Form = () => {
     const [metamaskStatus, setMetamaskStatus] = useState('LOADING');
 
     // Detect Metamask
-    detectEthereumProvider()
+    detectEthereumProvider({mustBeMetaMask: true})
     .then(provider => {
         if (provider) {
             setMetamaskStatus('CONNECTED');
