@@ -11,16 +11,22 @@ const Form = () => {
     const [estAmount, setEstAmount] = useState(0);
     const [metamaskStatus, setMetamaskStatus] = useState('LOADING');
 
-    // Detect Metamask
+    // Detect Metamask and ChainID
     detectEthereumProvider({mustBeMetaMask: true})
     .then(provider => {
         if (provider) {
+            ethereum.on('connect', ethereum => {
+                if (ethereum.chainId !== "0xaef3") {
+                    alert("Please connect to the CELO Alfajores testnet");
+                    window.location.reload();
+                }
+            });
             setMetamaskStatus('CONNECTED');
         } else {
             setMetamaskStatus('NOT_FOUND');
         }
     })
-    .catch(err => {
+    .catch(() => {
         setMetamaskStatus('NOTFOUND');
     });
 
