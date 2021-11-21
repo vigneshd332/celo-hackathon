@@ -1,10 +1,9 @@
 const Web3 = require('web3');
 const ContractKit = require('@celo/contractkit');
-const {privateKey} = require('../../env');
+const { privateKey, account } = require('../../env');
 
 const web3 = new Web3('https://alfajores-forno.celo-testnet.org');
 const kit = ContractKit.newKitFromWeb3(web3);
-const account = "0x50F550587e947A218B9F5b06ee804Cb45Bba0007";
 
 kit.connection.addAccount(privateKey);
 
