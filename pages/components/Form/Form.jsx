@@ -46,7 +46,12 @@ const Form = () => {
             .then(res => res.json())
             .then(data => {
                 setError('');
-                document.getElementById('messageDisplay').innerHTML = 'View the Transaction <a id="'+styles["receiptLink"]+'" target="_blank" href="https://alfajores-blockscout.celo-testnet.org/block/'+data.message.blockNumber+'/transactions">Here</a>';
+                if (data.message.blockNumber!==undefined){
+                    document.getElementById('messageDisplay').innerHTML = 'View the Transaction <a id="'+styles["receiptLink"]+'" target="_blank" href="https://alfajores-blockscout.celo-testnet.org/block/'+data.message.blockNumber+'/transactions">Here</a>';
+                }
+                else{
+                    setError('Transaction Failed');
+                }
             })
             .catch(err => console.log(err));
         }
